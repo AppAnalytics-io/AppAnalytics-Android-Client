@@ -1,0 +1,3 @@
+-keep interface io.appanalytics.sdk.VolleyCallback
+-keep interface io.appanalytics.sdk.Identifier
+-keep class io.appanalytics.sdk.** { *; }
