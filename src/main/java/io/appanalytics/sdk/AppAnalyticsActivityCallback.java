@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -32,6 +33,8 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
     private String androidID;
     private Locale locale;
     private String appVersion;
+    private int resX;
+    private int resY;
 
     public AppAnalyticsActivityCallback(String apiKey, Context context) {
         androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -43,6 +46,9 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        resX = dm.widthPixels;
+        resY = dm.heightPixels;
         StorageManager.INSTANCE.initializeStorageManager(apiKey, context);
         NetworkUtils.INSTANCE.setApplicationContext(context);
         storage = Storage.INSTANCE;
@@ -71,11 +77,6 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
         }
 
         if (!storage.anyOpenActivities()) {
-            Display display = activity.getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            int resX = size.x;
-            int resY = size.y;
             Manifest manifest = new Manifest(apiKey, androidID, resX, resY, System.currentTimeMillis(), UUID.randomUUID(), locale.getCountry(), Build.VERSION.RELEASE, appVersion);
             storage.addNewManifest(manifest);
             scheduler.startScheduledTask();
