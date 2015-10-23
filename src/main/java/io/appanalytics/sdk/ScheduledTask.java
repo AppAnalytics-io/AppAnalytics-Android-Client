@@ -28,7 +28,7 @@ class ScheduledTask extends TimerTask {
             networkUtils.sendDataToCloud(manifestList, new VolleyCallback() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("AppAnalytics", result);
+                    Log.i("AppAnalytics", "Manifests sent: " + result);
                     storage.clearManifests();
                 }
                 @Override
@@ -40,7 +40,7 @@ class ScheduledTask extends TimerTask {
             networkUtils.sendDataToCloud(sampleList, new VolleyCallback() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("AppAnalytics", result);
+                    Log.i("AppAnalytics", "Samples sent: " + result);
                     storage.clearSamples();
                 }
 

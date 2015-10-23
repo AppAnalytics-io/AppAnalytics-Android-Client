@@ -8,10 +8,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +40,8 @@ class NetworkUtils {
     }
 
     public void sendDataToCloud(List<?> list, VolleyCallback callback) {
-        try {
-            String url = restServiceAddress + apiPathPrefix + ((Identifier) list.get(0)).getModelUrl();
-            createBodyRequest(url, list, callback);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String url = restServiceAddress + apiPathPrefix + ((Identifier) list.get(0)).getModelUrl();
+        createBodyRequest(url, list, callback);
     }
 
     private void createBodyRequest(String url, final List<?> list, final VolleyCallback callback) {
@@ -64,6 +64,13 @@ class NetworkUtils {
             @Override
             public String getBodyContentType() {
                 return "application/json";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("apiSecret", "VWZVqqrDjs7262shGhwKzb69hGG34BT99vUgv98Ac338fZGOo4");
+                return headers;
             }
         };
         queue.add(stringRequest);

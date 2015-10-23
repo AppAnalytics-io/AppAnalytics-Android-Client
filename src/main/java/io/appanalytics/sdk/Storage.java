@@ -17,6 +17,7 @@ class Storage {
     private List<Sample> sampleList;
     private List<Activity> openedActivities;
     private String sessionID;
+    private int actionOrder;
 
     public String getAndroidID() {
         return androidID;
@@ -35,6 +36,18 @@ class Storage {
         manifestList = storageManager.loadData(Manifest.class);
     }
 
+    public void resetActionOrder() {
+        actionOrder = 1;
+    }
+
+    public void incrementActionOrder() {
+        ++actionOrder;
+    }
+
+    public int getActionOrder() {
+        return actionOrder;
+    }
+
     public void setSessionID(UUID sessionID) {
         this.sessionID = sessionID.toString();
     }
@@ -44,8 +57,12 @@ class Storage {
     }
 
     public void saveToStorage() {
-        storageManager.saveData(sampleList);
-        storageManager.saveData(manifestList);
+        if (sampleList.size() > 0) {
+            storageManager.saveData(sampleList);
+        }
+        if (manifestList.size() > 0) {
+            storageManager.saveData(manifestList);
+        }
     }
 
     public void clearSamples() {

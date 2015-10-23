@@ -37,15 +37,13 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
     private String userAgent;
 
     public AppAnalyticsActivityCallback(String apiKey, Context context) {
-        String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        storage.setAndroidID(androidID);
         this.apiKey = apiKey;
         locale = context.getResources().getConfiguration().locale;
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             appVersion = pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Log.e("AppAnalytics", "Package name not found");
         }
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         resX = dm.widthPixels;
@@ -57,6 +55,8 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
         StorageManager.INSTANCE.initializeStorageManager(apiKey, context);
         NetworkUtils.INSTANCE.setApplicationContext(context);
         storage = Storage.INSTANCE;
+        String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        storage.setAndroidID(androidID);
     }
 
     @Override
@@ -83,6 +83,7 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
 
         if (!storage.anyOpenActivities()) {
             storage.setSessionID(UUID.randomUUID());
+            storage.resetActionOrder();
             Manifest manifest = new Manifest(apiKey, storage.getAndroidID(), resX, resY, System.currentTimeMillis(), storage.getSessionID(), locale.getCountry(), Build.VERSION.RELEASE, appVersion, userAgent);
             storage.addNewManifest(manifest);
             scheduler.startScheduledTask();

@@ -1,10 +1,13 @@
 package io.appanalytics.sdk;
 
 import android.content.Context;
+import android.util.Log;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -28,46 +31,73 @@ class StorageManager {
     }
 
     public void saveData(List<?> dataList) {
+        ByteArrayOutputStream arrayOutputStream = null;
+        ObjectOutputStream objectOutput = null;
+        FileOutputStream fos = null;
         try {
             Identifier identifier = (Identifier) dataList.get(0);
             String description = identifier.getModelUrl();
-            ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutput = new ObjectOutputStream(arrayOutputStream);
+            arrayOutputStream = new ByteArrayOutputStream();
+            objectOutput = new ObjectOutputStream(arrayOutputStream);
             objectOutput.writeObject(dataList);
             byte[] data = arrayOutputStream.toByteArray();
-            objectOutput.close();
-            arrayOutputStream.close();
-            FileOutputStream fos = context.openFileOutput(apiKey + description, Context.MODE_PRIVATE);
+            fos = context.openFileOutput(apiKey + description, Context.MODE_PRIVATE);
             fos.write(data);
-            fos.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("AppAnalytics", "Save error");
+        } finally {
+            try {
+                if (arrayOutputStream != null) {
+                    arrayOutputStream.close();
+                }
+                if (objectOutput != null) {
+                    objectOutput.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) { }
         }
     }
 
     public <T> List<T> loadData(Class<T> clazz) {
+        FileInputStream fis = null;
+        ByteArrayOutputStream arrayOutputStream = null;
+        ByteArrayInputStream byteArray = null;
+        ObjectInputStream in = null;
+        List<T> dataList = null;
         try {
             Identifier identifier = (Identifier) clazz.newInstance();
             String description = identifier.getModelUrl();
-            FileInputStream fis = context.openFileInput(apiKey + description);
-            ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+            fis = context.openFileInput(apiKey + description);
+            arrayOutputStream = new ByteArrayOutputStream();
             byte[] b = new byte[1024];
             int bytesRead;
             while ((bytesRead = fis.read(b)) != -1) {
                 arrayOutputStream.write(b, 0, bytesRead);
             }
-            ByteArrayInputStream byteArray = new ByteArrayInputStream(arrayOutputStream.toByteArray());
-            ObjectInputStream in = new ObjectInputStream(byteArray);
-            List<T> dataList = (List<T>) in.readObject();
-            fis.close();
-            arrayOutputStream.close();
-            byteArray.close();
-            in.close();
-            return dataList;
+            byteArray = new ByteArrayInputStream(arrayOutputStream.toByteArray());
+            in = new ObjectInputStream(byteArray);
+            dataList = (List<T>) in.readObject();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("AppAnalytics", "Load error");
+            dataList = new ArrayList<>();
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (arrayOutputStream != null) {
+                    arrayOutputStream.close();
+                }
+                if (byteArray != null) {
+                    byteArray.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) { }
         }
-        return new ArrayList<>();
+        return dataList;
     }
-
 }

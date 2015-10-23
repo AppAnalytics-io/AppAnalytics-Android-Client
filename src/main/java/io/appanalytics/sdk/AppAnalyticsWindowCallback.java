@@ -95,7 +95,8 @@ class AppAnalyticsWindowCallback implements Window.Callback {
                 } else {
                     Log.i("AppAnalytics", view + " clicked.");
                 }
-                Sample sample = new Sample(x1, y1, System.currentTimeMillis(),view, activity.toString(), storage.getSessionID(), storage.getAndroidID());
+                Sample sample = new Sample(x1, y1, System.currentTimeMillis(), view, activity.getLocalClassName(), storage.getSessionID(), storage.getAndroidID(), storage.getActionOrder());
+                storage.incrementActionOrder();
                 storage.addNewSample(sample);
                 break;
         }
