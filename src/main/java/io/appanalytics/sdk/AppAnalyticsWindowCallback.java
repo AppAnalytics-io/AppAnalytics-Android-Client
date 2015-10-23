@@ -1,6 +1,7 @@
 package io.appanalytics.sdk;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.ActionMode;
@@ -27,10 +28,12 @@ class AppAnalyticsWindowCallback implements Window.Callback {
     private int y1;
     private View interacted;
     private Storage storage = Storage.INSTANCE;
+    private Activity activity;
 
-    public AppAnalyticsWindowCallback(Window.Callback windowCallback, List<View> leafList) {
+    public AppAnalyticsWindowCallback(Window.Callback windowCallback, List<View> leafList, Activity activity) {
         this.windowCallback = windowCallback;
         this.leafList = leafList;
+        this.activity = activity;
     }
 
     @Override
@@ -74,29 +77,25 @@ class AppAnalyticsWindowCallback implements Window.Callback {
                 if (Math.abs(diffY) > MIN_DISTANCE) {
                     yEligible = true;
                 }
+                String view = interacted == null ? "Screen" : interacted.getClass().getSimpleName() + interacted.getTag();
                 if (xEligible && yEligible) {
                     if (Math.abs(diffY) >= Math.abs(diffX)) {
                         String direction = diffY < 0 ? "up" : "down";
-                        String view = interacted == null ? "Screen" : interacted.toString() + interacted.getTag();
                         Log.i("AppAnalytics", view + " swiped " + direction);
                     } else {
                         String direction = diffX < 0 ? "left" : "right";
-                        String view = interacted == null ? "Screen" : interacted.toString() + interacted.getTag();
                         Log.i("AppAnalytics", view + " swiped " + direction);
                     }
                 } else if (xEligible) {
                     String direction = diffX < 0 ? "left" : "right";
-                    String view = interacted == null ? "Screen" : interacted.toString() + interacted.getTag();
                     Log.i("AppAnalytics", view + " swiped " + direction);
                 } else if (yEligible) {
                     String direction = diffY < 0 ? "up" : "down";
-                    String view = interacted == null ? "Screen" : interacted.toString() + interacted.getTag();
                     Log.i("AppAnalytics", view + " swiped " + direction);
                 } else {
-                    String view = interacted == null ? "Screen" : interacted.toString() + interacted.getTag();
                     Log.i("AppAnalytics", view + " clicked.");
                 }
-                Sample sample = new Sample(x1, x2, y1, y2);
+                Sample sample = new Sample(x1, y1, System.currentTimeMillis(),view, activity.toString(), storage.getSessionID(), storage.getAndroidID());
                 storage.addNewSample(sample);
                 break;
         }

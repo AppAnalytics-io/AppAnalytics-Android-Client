@@ -6,17 +6,25 @@ import java.io.Serializable;
  * Created by Cem Sancak on 7.10.2015.
  */
 class Sample implements Identifier, Serializable {
+    private int actionId;
+    private float x;
+    private float y;
+    private String elementId;
+    private int actionOrder;
+    private String url;
+    private String sessionID;
+    private long timestamp;
+    private String androidID;
 
-    private float x1;
-    private float y1;
-    private float x2;
-    private float y2;
-
-    public Sample(float x1, float x2, float y1, float y2) {
-        this.x1 = x1;
-        this.x2 = x2;
-        this.y1 = y1;
-        this.y2 = y2;
+    public Sample(float x, float y, long timestamp, String elementId, String url, String sessionID, String androidID) {
+        this.x = x;
+        this.y = y;
+        actionId = 1;
+        this.timestamp = timestamp;
+        this.elementId = elementId;
+        this.url = url;
+        this.sessionID = sessionID;
+        this.androidID = androidID;
     }
 
     @Override

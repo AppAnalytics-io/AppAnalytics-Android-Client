@@ -30,14 +30,15 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
     private Storage storage;
     private Scheduler scheduler = Scheduler.INSTANCE;
     private String apiKey;
-    private String androidID;
     private Locale locale;
     private String appVersion;
     private int resX;
     private int resY;
+    private String userAgent;
 
     public AppAnalyticsActivityCallback(String apiKey, Context context) {
-        androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        storage.setAndroidID(androidID);
         this.apiKey = apiKey;
         locale = context.getResources().getConfiguration().locale;
         try {
@@ -49,6 +50,10 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         resX = dm.widthPixels;
         resY = dm.heightPixels;
+        float screenWidth  = resX / dm.xdpi;
+        float screenHeight = resY / dm.ydpi;
+        double size = Math.sqrt(Math.pow(screenWidth, 2) + Math.pow(screenHeight, 2));
+        userAgent = size >= 6.5 ? "AndroidTablet/69" : "AndroidPhone/69";
         StorageManager.INSTANCE.initializeStorageManager(apiKey, context);
         NetworkUtils.INSTANCE.setApplicationContext(context);
         storage = Storage.INSTANCE;
@@ -72,12 +77,13 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
                     getLeafViews(decorView, leafList);
                 }
             });
-            AppAnalyticsWindowCallback aawc = new AppAnalyticsWindowCallback(callback, leafList);
+            AppAnalyticsWindowCallback aawc = new AppAnalyticsWindowCallback(callback, leafList, activity);
             window.setCallback(aawc);
         }
 
         if (!storage.anyOpenActivities()) {
-            Manifest manifest = new Manifest(apiKey, androidID, resX, resY, System.currentTimeMillis(), UUID.randomUUID(), locale.getCountry(), Build.VERSION.RELEASE, appVersion);
+            storage.setSessionID(UUID.randomUUID());
+            Manifest manifest = new Manifest(apiKey, storage.getAndroidID(), resX, resY, System.currentTimeMillis(), storage.getSessionID(), locale.getCountry(), Build.VERSION.RELEASE, appVersion, userAgent);
             storage.addNewManifest(manifest);
             scheduler.startScheduledTask();
         }

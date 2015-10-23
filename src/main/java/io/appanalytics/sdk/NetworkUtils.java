@@ -24,10 +24,8 @@ class NetworkUtils {
     public final static NetworkUtils INSTANCE = new NetworkUtils();
     private final String restServiceAddress = "https://gerison.appanalytics.io/";
     private final String apiPathPrefix = "api/v2/";
-    //private final String parameters = "?UDID=00218baddc4ef1994c66ff983b1397ca";
     private RequestQueue queue;
     private Gson gson;
-    private String userAgent;
 
     private NetworkUtils() {
         gson = new Gson();
@@ -35,11 +33,6 @@ class NetworkUtils {
 
     public void setApplicationContext(Context context) {
         queue = Volley.newRequestQueue(context);
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        float screenWidth  = dm.widthPixels / dm.xdpi;
-        float screenHeight = dm.heightPixels / dm.ydpi;
-        double size = Math.sqrt(Math.pow(screenWidth, 2) + Math.pow(screenHeight, 2));
-        userAgent = size >= 7 ? "AndroidTablet" : "AndroidPhone";
     }
 
     public void sendDataToCloud(List<?> list, VolleyCallback callback) {
@@ -71,12 +64,6 @@ class NetworkUtils {
             @Override
             public String getBodyContentType() {
                 return "application/json";
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("User-Agent", userAgent);
-                return headers;
             }
         };
         queue.add(stringRequest);

@@ -22,18 +22,31 @@ class ScheduledTask extends TimerTask {
 
     @Override
     public void run() {
-        //List<Sample> sampleList = storage.getSamples();
-        List<Manifest> sampleList = storage.getManifests();
-        if (sampleList.size() > 0) {
+        List<Sample> sampleList = storage.getSamples();
+        List<Manifest> manifestList = storage.getManifests();
+        if (manifestList.size() > 0) {
+            networkUtils.sendDataToCloud(manifestList, new VolleyCallback() {
+                @Override
+                public void onSuccess(String result) {
+                    Log.i("AppAnalytics", result);
+                    storage.clearManifests();
+                }
+                @Override
+                public void onError(VolleyError error) {
+                    Log.e("AppAnalytics", error.getClass().getSimpleName());
+                }
+            });
+        } else if (sampleList.size() > 0) {
             networkUtils.sendDataToCloud(sampleList, new VolleyCallback() {
                 @Override
                 public void onSuccess(String result) {
                     Log.i("AppAnalytics", result);
                     storage.clearSamples();
                 }
+
                 @Override
-                public void onError(VolleyError result) {
-                    Log.e("AppAnalytics", result.getClass().getSimpleName());
+                public void onError(VolleyError error) {
+                    Log.e("AppAnalytics", error.getClass().getSimpleName());
                 }
             });
         }

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Cem Sancak on 7.10.2015.
@@ -15,6 +16,17 @@ class Storage {
     private List<Manifest> manifestList;
     private List<Sample> sampleList;
     private List<Activity> openedActivities;
+    private String sessionID;
+
+    public String getAndroidID() {
+        return androidID;
+    }
+
+    public void setAndroidID(String androidID) {
+        this.androidID = androidID;
+    }
+
+    private String androidID;
     private StorageManager storageManager = StorageManager.INSTANCE;
 
     private Storage() {
@@ -23,12 +35,25 @@ class Storage {
         manifestList = storageManager.loadData(Manifest.class);
     }
 
+    public void setSessionID(UUID sessionID) {
+        this.sessionID = sessionID.toString();
+    }
+
+    public String getSessionID() {
+        return sessionID;
+    }
+
     public void saveToStorage() {
         storageManager.saveData(sampleList);
+        storageManager.saveData(manifestList);
     }
 
     public void clearSamples() {
         sampleList.clear();
+    }
+
+    public void clearManifests() {
+        manifestList.clear();
     }
 
     public List<Sample> getSamples() {

@@ -13,14 +13,15 @@ class Manifest implements Identifier, Serializable {
     private int resX;
     private int resY;
     private long startDate;
-    private UUID sessionID;
+    private String sessionID;
     private String locale;
     private String versionOs;
     private String versionApp;
+    private String userAgent;
 
     public Manifest() { }
 
-    public Manifest(String apiKey, String AID, int resX, int resY, long startDate, UUID sessionID, String locale, String versionOs, String versionApp) {
+    public Manifest(String apiKey, String AID, int resX, int resY, long startDate, String sessionID, String locale, String versionOs, String versionApp, String userAgent) {
         this.apiKey = apiKey;
         this.AID = AID;
         this.resX = resX;
@@ -30,6 +31,7 @@ class Manifest implements Identifier, Serializable {
         this.locale = locale;
         this.versionOs = versionOs;
         this.versionApp = versionApp;
+        this.userAgent = userAgent;
     }
 
     @Override

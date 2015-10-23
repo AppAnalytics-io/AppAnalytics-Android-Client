@@ -1,9 +1,6 @@
 package io.appanalytics.sdk;
 
 import android.content.Context;
-import android.util.Base64;
-import android.util.Base64OutputStream;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
