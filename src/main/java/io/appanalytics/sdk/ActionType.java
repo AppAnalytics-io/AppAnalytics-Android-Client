@@ -3,7 +3,7 @@ package io.appanalytics.sdk;
 /**
  * Created by Cem Sancak on 22.10.2015.
  */
-public enum ActionType {
+enum ActionType {
     SingleTapWith1Finger,
     DoubleTapWith1Finger,
     TripleTapWith1Finger,

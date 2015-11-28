@@ -2,6 +2,7 @@ package io.appanalytics.sdk;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -59,13 +60,13 @@ class NetworkUtils {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String body = gson.toJson(list);
+                //Log.i("gsoned", body);
                 return body.getBytes();
             }
             @Override
             public String getBodyContentType() {
-                return "application/json";
+                return "application/json; charset=utf-8";
             }
-
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();

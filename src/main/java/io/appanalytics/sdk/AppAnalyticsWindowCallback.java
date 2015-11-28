@@ -81,19 +81,19 @@ class AppAnalyticsWindowCallback implements Window.Callback {
                 if (xEligible && yEligible) {
                     if (Math.abs(diffY) >= Math.abs(diffX)) {
                         String direction = diffY < 0 ? "up" : "down";
-                        Log.i("AppAnalytics", view + " swiped " + direction);
+                        //Log.i("AppAnalytics", view + " swiped " + direction);
                     } else {
                         String direction = diffX < 0 ? "left" : "right";
-                        Log.i("AppAnalytics", view + " swiped " + direction);
+                        //Log.i("AppAnalytics", view + " swiped " + direction);
                     }
                 } else if (xEligible) {
                     String direction = diffX < 0 ? "left" : "right";
-                    Log.i("AppAnalytics", view + " swiped " + direction);
+                    //Log.i("AppAnalytics", view + " swiped " + direction);
                 } else if (yEligible) {
                     String direction = diffY < 0 ? "up" : "down";
-                    Log.i("AppAnalytics", view + " swiped " + direction);
+                    //Log.i("AppAnalytics", view + " swiped " + direction);
                 } else {
-                    Log.i("AppAnalytics", view + " clicked.");
+                    //Log.i("AppAnalytics", view + " clicked.");
                 }
                 Sample sample = new Sample(x1, y1, System.currentTimeMillis(), view, activity.getLocalClassName(), storage.getSessionID(), storage.getAndroidID(), storage.getActionOrder());
                 storage.incrementActionOrder();

@@ -85,6 +85,8 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
             storage.setSessionID(UUID.randomUUID());
             storage.resetActionOrder();
             Manifest manifest = new Manifest(apiKey, storage.getAndroidID(), resX, resY, System.currentTimeMillis(), storage.getSessionID(), locale.getCountry(), Build.VERSION.RELEASE, appVersion, userAgent);
+            //Log.i("api", apiKey);
+            //Log.i("androidid", storage.getAndroidID());
             storage.addNewManifest(manifest);
             scheduler.startScheduledTask();
         }
@@ -104,7 +106,7 @@ class AppAnalyticsActivityCallback implements Application.ActivityLifecycleCallb
         if (!storage.anyOpenActivities()) {
             scheduler.stopScheduledTask();
             storage.saveToStorage();
-            Log.i("AppAnalyticsStorage", "List saved: " + storage.getSamples().size());
+            //Log.i("AppAnalyticsStorage", "List saved: " + storage.getSamples().size());
         }
     }
 
